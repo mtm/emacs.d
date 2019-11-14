@@ -1,2 +1,3 @@
-(when (equal 'gnu/linux system-type)
-  (load "plat/linux"))
+(pcase system-type
+  ('gnu/linux (load "plat/linux"))
+  ('darwin (load "plat/darwin")))
