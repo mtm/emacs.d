@@ -1,7 +1,6 @@
 (my-el-get-bundles
  diminish
  dired-hacks
- emacs-w3m
  geiser
  gh
  graphviz-dot-mode
@@ -13,7 +12,6 @@
  paredit
  plantuml-mode
  projectile
- slime
  window-numbering)
 
 ;;;;;;;;;;;;;;;; user-prefix keymap ;;;;;;;;;;;;;;;;
@@ -63,10 +61,10 @@
 
 (use-package buffer-move
   :bind (:map user-commands-prefix-map
-	      ("<left>"  . buf-move-left)
-	      ("<right>" . buf-move-right)
-	      ("<down>"  . buf-move-down)
-	      ("<up>"    . buf-move-up)))
+              ("<left>"  . buf-move-left)
+              ("<right>" . buf-move-right)
+              ("<down>"  . buf-move-down)
+              ("<up>"    . buf-move-up)))
 
 (use-package diary-lib
   :config
@@ -85,26 +83,10 @@
   (add-hook 'compilation-filter-hook 'compilation-mode-colorize-buffer)
   (add-hook 'eshell-preoutput-filter-functions 'ansi-color-filter-apply))
 
-(defun setup-cvs-mode ()
-  (font-lock-mode 1))
-
-(defun cvs-load-hook ()
-  (setq cvs-buffer-name-alist
-	(cons `("diff" ,cvs-diff-buffer-name nil)
-	      (remove-if '(lambda (x) (equal (car x) "diff"))
-			 cvs-buffer-name-alist))))
-
-(use-package pcvs
-  :config
-  (add-hook 'cvs-mode-hook 'turn-on-line-truncation)
-  (add-hook 'cvs-mode-hook 'setup-cvs-mode)
-  (add-hook 'pcl-cvs-load-hook 'cvs-load-hook)
-  (setq log-edit-keep-buffer t)
-  (setenv "CVS_RSH" "ssh"))
-
 (defun magit-setup-hook ()
   (local-unset-key [C-tab])
-  (define-key magit-mode-map [C-tab] nil))
+  (define-key magit-mode-map [C-tab] nil)
+  (global-set-key [f2] 'magit-status))
 
 (use-package magit
   :config
@@ -129,16 +111,16 @@
       (mkdir local-info-directory))
     (with-cwd local-info-directory
       (dolist (f (find-lisp-find-files "~/.emacs.d/el-get/" "\\.info$"))
-	(let ((d (file-name-directory f)))
-	  (when (directory-files d nil "\\.info$")
-	    (call-process "install-info"
-			  nil
-			  '(" *info-setup*" t)
-			  nil
-			  "--debug"
-			  f
-			  "dir")
-	    (add-to-list 'Info-additional-directory-list d)))))
+        (let ((d (file-name-directory f)))
+          (when (directory-files d nil "\\.info$")
+            (call-process "install-info"
+                          nil
+                          '(" *info-setup*" t)
+                          nil
+                          "--debug"
+                          f
+                          "dir")
+            (add-to-list 'Info-additional-directory-list d)))))
     (add-to-list 'Info-directory-list local-info-directory))
   (add-to-list 'Info-directory-list "/app/stumpwm/share/info")
   (add-to-list 'Info-directory-list "/app/sbcl/share/info")
@@ -186,84 +168,14 @@
 
 (use-package winner
   :bind (:map user-commands-prefix-map
-	      ("\C-b" . winner-undo)
-	      ("\C-f" . winner-redo))
+              ("\C-b" . winner-undo)
+              ("\C-f" . winner-redo))
   :config
   (winner-mode 1))
 
 (use-package projectile
   :config
   (setq projectile-keymap-prefix (kbd "C-c C-p")))
-
-(defun my-slime-list-connections ()
-  (interactive)
-  (slime-list-connections)
-  (pop-to-buffer "*SLIME Connections*"))
-
-(defun w3m-browse-url-other-window (url &optional new-session)
-  (save-excursion
-    (when (one-window-p)
-      (split-window-horizontally))
-    (other-window 1)
-    (let ((w3m-use-tab nil))
-      (w3m-browse-url url new-session))))
-
-(defun my-url-browser-function (&rest args)
-  (apply (if current-prefix-arg
-	     'browse-url-default-browser
-	   'w3m-browse-url-other-window)
-	 args))
-
-(defun w3m-mode-hook ()
-  (define-key w3m-mode-map "\M-t" 'w3m-copy-buffer))
-
-(use-package w3m
-  :config
-  (add-hook 'w3m-mode-hook 'w3m-mode-hook)
-  (setq browse-url-browser-function 'w3m-browse-url-other-window))
-
-(defun my-slime-mode-hook ()
-  (setq browse-url-browser-function 'my-url-browser-function)
-  ;; (set-face-attribute 'slime-highlight-edits-face nil :background "grey")
-  (define-key slime-mode-map "\M-\C-x" 'slime-compile-defun)
-  (define-key slime-mode-map "\C-c\C-xc" 'my-slime-list-connections)
-  (unless (boundp 'last-command-char)
-    (defvar last-command-char nil)))
-
-(use-package slime
-  :config
-  (slime-setup '(slime-repl))
-  (setq slime-protocol-version 'ignore)
-  (add-hook 'slime-mode-hook 'my-slime-mode-hook))
-
-(defun sbcl ()
-  (interactive)
-  (if-bind (sbcl-path (locate-path "sbcl" exec-path))
-    (let ((slime-lisp-implementations `((sbcl (,sbcl-path)))))
-      ;; (setenv "SBCL_HOME" (file-name-directory sbcl-path))
-      (slime))
-    (error "The sbcl application could not be found")))
-
-(defun ccl ()
-  (interactive)
-  (if-bind (ccl-path (locate-path "ccl64" exec-path))
-    (let ((slime-lisp-implementations `((ccl (,ccl-path)))))
-      (slime))
-    (error "The ccl application could not be found")))
-
-(defun clisp ()
-  (interactive)
-  (if-bind (clisp-path (locate-path "clisp" exec-path))
-    (let ((slime-lisp-implementations `((clisp (,clisp-path " -K full")))))
-      (slime))
-    (error "The clisp application could not be found")))
-
-(defun ecl ()
-  (interactive)
-  (if-bind (ecl-path (locate-path "ecl.sh" exec-path))
-    (let ((slime-lisp-implementations `((ecl (,ecl-path)))))
-      (slime))
-    (error "The ecl application could not be found")))
 
 ;;;;;;;;;;;;;;;; startup ;;;;;;;;;;;;;;;;
 
@@ -272,33 +184,33 @@
   (interactive)
   (let ((z-wid (aif (assq 'width initial-frame-alist) (cdr it) 162)))
     (if (< (frame-width) z-wid)
-	(set-frame-width (selected-frame) z-wid)
+        (set-frame-width (selected-frame) z-wid)
       (set-frame-width (selected-frame) 81))))
 
 (defun toggle-window-split ()
   (interactive)
   (if (= (count-windows) 2)
       (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
+             (next-win-buffer (window-buffer (next-window)))
+             (this-win-edges (window-edges (selected-window)))
+             (next-win-edges (window-edges (next-window)))
+             (this-win-2nd (not (and (<= (car this-win-edges)
+                                         (car next-win-edges))
+                                     (<= (cadr this-win-edges)
+                                         (cadr next-win-edges)))))
+             (splitter
+              (if (= (car this-win-edges)
+                     (car (window-edges (next-window))))
+                  'split-window-horizontally
+                'split-window-vertically)))
+        (delete-other-windows)
+        (let ((first-win (selected-window)))
+          (funcall splitter)
+          (if this-win-2nd (other-window 1))
+          (set-window-buffer (selected-window) this-win-buffer)
+          (set-window-buffer (next-window) next-win-buffer)
+          (select-window first-win)
+          (if this-win-2nd (other-window 1))))))
 
 (defun my-previous-window ()
   "Switch to previous window"
@@ -321,7 +233,7 @@
   (dolist (buffer (buffer-list))
     (let ((file-name (buffer-file-name buffer)))
       (if (and file-name (string-match pattern file-name))
-	  (kill-buffer buffer)))))
+          (kill-buffer buffer)))))
 
 (defun narrow-forward-page (arg)
   (interactive "p")
@@ -418,7 +330,7 @@
   (interactive)
   (browse-url
    (concat "http://en.wikipedia.org/w/index.php?search="
-	   (query-string-encode
+           (query-string-encode
             (capitalize (or (region) (read-string "Wikipedia: ")))))))
 
 (defun emacswiki (q)
@@ -474,4 +386,54 @@
   (interactive (list (mark) (point)))
   (ansi-color-apply-on-region start end))
 
+(defun compress-whitespace ()
+  "Compress the whitespace between two non-whitespace characters to a single space"
+  (interactive "*")
+  (save-excursion
+    (save-restriction
+      (save-match-data
+        (progn
+          (re-search-backward "[^ \t\r\n]" nil t)
+          (re-search-forward "[ \t\r\n]+" nil t)
+          (replace-match " " nil nil))))))
+
+(defun my-isearch-word-at-point ()
+  (interactive)
+  (call-interactively 'isearch-forward-regexp))
+
+(defun my-isearch-yank-word-hook ()
+  (when (equal this-command 'my-isearch-word-at-point)
+    (let ((string (concat "\\<"
+                          (buffer-substring-no-properties
+                           (progn (skip-syntax-backward "w_") (point))
+                           (progn (skip-syntax-forward "w_") (point)))
+                          "\\>")))
+      (if (and isearch-case-fold-search
+               (eq 'not-yanks search-upper-case))
+          (setq string (downcase string)))
+      (setq isearch-string string
+            isearch-message
+            (concat isearch-message
+                    (mapconcat 'isearch-text-char-description
+                               string ""))
+            isearch-yank-flag t)
+      (isearch-search-and-update))))
+
+(add-hook 'isearch-mode-hook 'my-isearch-yank-word-hook)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Global key bindings
+
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key [f1] 'shell)
+(global-set-key [f2] 'magit-status)
+(global-set-key (kbd "M-g") 'goto-line)
+
+(global-set-key "\C-x2" (lambda () (interactive)(split-window-vertically) (other-window 1)))
+(global-set-key "\C-x3" (lambda () (interactive)(split-window-horizontally) (other-window 1)))
+(global-set-key "\C-xO" 'my-previous-window)
+
+(global-set-key "\M-\\" 'compress-whitespace)
+(global-set-key (kbd "C-x *") 'my-isearch-word-at-point)
 
