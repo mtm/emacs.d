@@ -6,7 +6,8 @@
  (emacs-fun :url "https://github.com/kriyative/emacs-fun.git"
             :features (efun-base efun-cmds))
  popup
- use-package)
+ use-package
+ load-relative)
 
 ;;;;;;;;;;;;;;;; packages ;;;;;;;;;;;;;;;;
 
@@ -38,7 +39,7 @@
   :config
   (set-default 'dired-omit-mode t)
   (setq dired-omit-files (concat dired-omit-files "\\|^\\..+$")
-	dired-listing-switches "-alh")
+        dired-listing-switches "-alh")
   :bind (:map dired-mode-map
               ("k" . dired-kill-subdir)
               (">" . dired-omit-mode)
@@ -52,11 +53,13 @@
 
 (use-package fortune
   :bind (:map user-commands-prefix-map
-	      ("ff" . fortune)
+              ("ff" . fortune)
               ("fc" . fortune-computers))
   :config
   (setq fortune-dir "/usr/share/games/fortunes"
         fortune-file "/usr/share/games/fortunes/fortunes"))
+
+(use-package load-relative)
 
 ;;;;;;;;;;;;;;;; startup ;;;;;;;;;;;;;;;;
 
