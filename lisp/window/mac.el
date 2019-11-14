@@ -10,20 +10,20 @@
   (interactive)
   (do-applescript
    (concat "tell application \"System Events\"\n"
-	   "set visible of process \"Emacs\" to false\n"
-	   "end tell\n")))
+           "set visible of process \"Emacs\" to false\n"
+           "end tell\n")))
 
 (defun mac-control-itunes (command)
   (interactive
    (list (completing-read "Command: "
-			  '("activate"
-			    "deactivate"
-			    "next track"
-			    "pause"
-			    "play"
-			    "previous track"))))
+                          '("activate"
+                            "deactivate"
+                            "next track"
+                            "pause"
+                            "play"
+                            "previous track"))))
   (do-applescript
-   (format "tell application \"iTunes\" to %s\n" command)))
+   (format "tell application \"Music\" to %s\n" command)))
 
 (defun mac-itunes-pause ()
   (interactive)
@@ -83,20 +83,20 @@
     (let ((script (with-output-to-string (dolist (expr code) (emit expr)))))
       (message script)
       (do-applescript script))))
-		  
+
 (defun mac-dictionary-search ()
   (interactive)
   (let ((term (term-at-point-or-read)))
     (message "looking up %s" term)
     (if term
-	(applescript
-	 `(tell (application "Dictionary") (activate))
-	 `(tell (application "System Events")
-		(tell (process "Dictionary")
-		      (set frontmost to true)
-		      (keystroke "F" using (list{ "command down" "option down"))
-		      (keystroke ,term)
-		      (keystroke return))))
+        (applescript
+         `(tell (application "Dictionary") (activate))
+         `(tell (application "System Events")
+                (tell (process "Dictionary")
+                      (set frontmost to true)
+                      (keystroke "F" using (list{ "command down" "option down"))
+                      (keystroke ,term)
+                      (keystroke return))))
       (message "lookup what?"))))
 
 (unless (fboundp 'mac-toggle-max-window)
@@ -129,16 +129,15 @@
 ;;........1.........2.........3.........4.........5.........6.........7.........8.........9
 ;;23456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
 ;; (set-default-font "Consolas 18")
-(set-default-font "Monaco 12")
+;; (set-default-font "Monaco 12")
 ;; (set-default-font "Menlo 12")
 ;; (set-default-font "Andale Mono 10")
 ;; (set-default-font "Inconsolata 13")
-;; (set-default-font "Inconsolata 18")
+(set-default-font "Inconsolata 18")
 (global-set-key "\M-h" 'mac-hide-emacs)
-(global-set-key "\M- " 'just-one-space)
 (global-set-key '[C-tab] 'other-window)
 
-(setq mac-pass-command-to-system nil)
+(setq mac-pass-command-to-system t)
 (set-fringe-mode '(5 . 5))
 (set-default 'fringe-indicator-alist
              '((truncation . empty-line)
@@ -153,7 +152,7 @@
                (unknown . question-mark)))
 (scroll-bar-mode -1)
 ;; (display-time-mode -1)
-(setq mac-command-modifier 'meta
+(setq mac-command-modifier 'super
       x-select-enable-clipboard t
       one-buffer-one-frame-mode nil
       mac-autohide-menubar-on-maximize nil)
