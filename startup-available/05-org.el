@@ -55,7 +55,7 @@ one."
   (define-key org-mode-map "\M-p" 'prev-page)
   (define-key org-mode-map (kbd "C-c o") 'org-open-at-point)
   (setq org-export-html-postamble nil
-	org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar"
+        org-ditaa-jar-path "/usr/share/ditaa/ditaa.jar"
         org-log-done 'time)
   (org-babel-do-load-languages
    'org-babel-load-languages
@@ -83,7 +83,7 @@ one."
   ;;       org-gcal-client-secret my-org-gcal-client-secret
   ;;       org-gcal-file-alist my-org-gcal-file-alist)
   (setq org-agenda-mode-hook nil
-	org-gcal-auto-archive nil)
+        org-gcal-auto-archive nil)
   ;; (add-hook 'org-agenda-mode-hook (lambda () (org-gcal-sync)))
   ;; (add-hook 'org-capture-after-finalize-hook (lambda () (org-gcal-sync)))
   )
@@ -108,28 +108,28 @@ one."
   (deferred:$
     (deferred:next
       (lambda ()
-	(message "org-gcal-multi-fetch starting ...")
-	(org-gcal-multi-do-acct (first org-gcal-accounts))))
+        (message "org-gcal-multi-fetch starting ...")
+        (org-gcal-multi-do-acct (first org-gcal-accounts))))
     (deferred:nextc it
       (lambda (accounts)
-	(message "here: %S" accounts)
-	(when accounts
-	  ;; (org-gcal-multi-do-acct (first org-gcal-accounts))
-	  (deferred:nextc (deferred:wait 0) self)
-	  (cdr accounts))))
+        (message "here: %S" accounts)
+        (when accounts
+          ;; (org-gcal-multi-do-acct (first org-gcal-accounts))
+          (deferred:nextc (deferred:wait 0) self)
+          (cdr accounts))))
     (deferred:nextc it
       (lambda (x)
-	(message "org-gcal-multi-fetch done")))))
+        (message "org-gcal-multi-fetch done")))))
 
 (defun org-gcal-multi-fetch ()
   (interactive)
   (deferred:$
     (deferred:next
       (lambda ()
-	(org-gcal-multi-do-acct (first org-gcal-accounts))))
+        (org-gcal-multi-do-acct (first org-gcal-accounts))))
     (deferred:nextc it
       (lambda ()
-	(org-gcal-multi-do-acct (second org-gcal-accounts))))))
+        (org-gcal-multi-do-acct (second org-gcal-accounts))))))
 
 ;; (org-gcal-multi-fetch)
 
