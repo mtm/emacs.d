@@ -1,49 +1,56 @@
 (my-el-get-bundles
- (cider :checkout "v0.17.0")
+ (cider :checkout "v0.23.0")
+ highlight-sexp
  csv-mode)
 
 ;;;;;;;;;;;;;;;; packages ;;;;;;;;;;;;;;;;
 
+(use-package highlight-sexp
+  :config
+  (setq hl-sexp-background-color "grey95"))
+
 (defun clojure-mode-hook ()
   (auto-revert-mode 1)
   (outline-minor-mode 1)
-  (enable-paredit-mode))
+  (enable-paredit-mode)
+  (highlight-sexp-mode 1)
+
+  ;; open .edn files in clojure-mode
+  (setq auto-mode-alist (cons `("\\.edn$" . clojure-mode) auto-mode-alist)))
 
 (use-package clojure-mode
   :bind
   (:map clojure-mode-map
-	("C-c ," . cider-test-run-loaded-tests)
-	("C-c M-," . cider-test-run-test)
-	("C-M-x" . cider-force-eval-defun-at-point))
+        ("C-c ," . cider-test-run-loaded-tests)
+        ("C-c M-," . cider-test-run-test)
+        ("C-M-x" . cider-force-eval-defun-at-point))
   :config
   (add-hook 'clojure-mode-hook 'clojure-mode-hook)
   (setq auto-mode-alist
         (remove-if (lambda (x)
                      (equal (car x) "\\.cljc\\'"))
                    auto-mode-alist))
-  (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode)))
+  (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
+  (add-to-list 'auto-mode-alist '("\\.edn$" . clojurec-mode))
 
 (use-package cider-repl
   :config
   (cider-repl-add-shortcut "sayoonara" 'cider-quit)
   (setq cider-completion-use-context nil
-	cider-prompt-for-symbol nil
-	cider-repl-display-help-banner nil
-	cider-use-overlays nil
-	cider-repl-use-pretty-printing nil
-	cider-redirect-server-output-to-repl nil))
+        cider-prompt-for-symbol nil
+        cider-repl-display-help-banner nil
+        cider-use-overlays nil
+        cider-repl-use-pretty-printing nil
+        cider-redirect-server-output-to-repl nil))
 
 (defun cider-mode-hook ()
   (eldoc-mode)
   (outline-minor-mode))
 
-;; (remove-hook 'cider-mode-hook 'cider-mode-hook)
-;; (unload-feature 'cider t)
-
 (use-package cider
   :bind
   (:map cider-mode-map
-	("C-c C-k" . cider-load-buffer-ext))
+        ("C-c C-k" . cider-load-buffer-ext))
   :config
   (add-hook 'cider-mode-hook 'cider-mode-hook)
   (setq cider-lein-parameters "trampoline repl :headless"
@@ -81,11 +88,11 @@
       (forward-sexp 2)
       (backward-sexp)
       (when (string-match "^\\^" (cider-sexp-at-point))
-	(forward-sexp 2)
-	(backward-sexp))
+        (forward-sexp 2)
+        (backward-sexp))
       (let ((sym (cider-symbol-at-point)))
-	(message "Removing sym: %s" sym)
-	(cider--remove-sym sym))))
+        (message "Removing sym: %s" sym)
+        (cider--remove-sym sym))))
   (cider-eval-defun-at-point nil))
 
 (use-package csv-mode
@@ -122,14 +129,14 @@
 (use-package sql
   :config
   (dolist (pv '((:prompt-regexp "^[-[:alnum:]_]*=[#>] ")
-		(:prompt-cont-regexp "^[-[:alnum:]_]*[-(][#>] ")))
+                (:prompt-cont-regexp "^[-[:alnum:]_]*[-(][#>] ")))
     (apply 'sql-set-product-feature 'postgres pv)))
 
 (defun my-emacs-lisp-mode-hook ()
-  ;; (local-set-key "	" 'lisp-complete-symbol)
+  ;; (local-set-key " " 'lisp-complete-symbol)
   (outline-minor-mode 1)
   (setq outline-regexp "^[(;]"
-	indent-tabs-mode nil)
+        indent-tabs-mode nil)
   ;; (setup-lisp-indent-function)
   (local-set-key "\M-." 'find-function)
   (font-lock-mode 1)
@@ -165,7 +172,7 @@
 (defun my-common-lisp-mode-hook ()
   (font-lock-mode)
   (font-lock-add-keywords 'lisp-mode
-			  '(("defclass\*" . font-lock-keyword-face)))
+                          '(("defclass\*" . font-lock-keyword-face)))
   (modify-syntax-entry ?\[ "(]" lisp-mode-syntax-table)
   (modify-syntax-entry ?\] ")[" lisp-mode-syntax-table)
   (set (make-local-variable 'lisp-indent-function) 'common-lisp-indent-function)
