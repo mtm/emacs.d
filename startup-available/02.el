@@ -1,6 +1,7 @@
 (my-el-get-bundles
  (cider :checkout "v0.23.0")
  highlight-sexp
+ geiser
  csv-mode)
 
 ;;;;;;;;;;;;;;;; packages ;;;;;;;;;;;;;;;;
@@ -16,17 +17,29 @@
   (outline-minor-mode 1)
   (enable-paredit-mode)
   (highlight-sexp-mode 1)
-  (lambda-mode 1)
-
-  ;; open .edn files in clojure-mode
-  (setq auto-mode-alist (cons `("\\.edn$" . clojure-mode) auto-mode-alist)))
+  (lambda-mode 1))
 
 (use-package clojure-mode
   :bind
   (:map clojure-mode-map
         ("C-c ," . cider-test-run-loaded-tests)
         ("C-c M-," . cider-test-run-test)
-        ("C-M-x" . cider-force-eval-defun-at-point))
+        ("C-M-x" . cider-force-eval-defun-at-point)
+        ("H-b" . projectile-switch-to-buffer)
+        ("H-e" . cider-eval-last-sexp)
+        ("H-r" . cider-eval-region)
+        ("H-x" . cider-eval-defun-at-point)
+        ("H-z" . cider-switch-to-repl-buffer)
+        ("H-t" . projectile-toggle-between-implementation-and-test)
+        ("H-d" . cider-doc)
+        ("H-i" . cider-inspect)
+        ("H-k" . cider-load-buffer)
+        ("H-N" . cider-eval-ns-form)
+        ("H-p" . cider-pprint-eval-last-sexp)
+        ("H-s" . cider-docview-source)
+        ("H-n" . cider-repl-set-ns)
+        ("H-m" . cider-macroexpand-1)
+        ("C-H-m" . cider-macroexpand-all))
   :config
   (add-hook 'clojure-mode-hook 'clojure-mode-hook)
   (setq auto-mode-alist
@@ -34,7 +47,7 @@
                      (equal (car x) "\\.cljc\\'"))
                    auto-mode-alist))
   (add-to-list 'auto-mode-alist '("\\.cljc\\'" . clojurec-mode))
-  (add-to-list 'auto-mode-alist '("\\.edn$" . clojurec-mode))
+  (add-to-list 'auto-mode-alist '("\\.edn$" . clojurec-mode)))
 
 (use-package cider-repl
   :config
@@ -42,13 +55,14 @@
   (setq cider-completion-use-context nil
         cider-prompt-for-symbol nil
         cider-repl-display-help-banner nil
-        cider-use-overlays nil
+        cider-use-overlays t
         cider-repl-use-pretty-printing nil
         cider-redirect-server-output-to-repl nil))
 
 (defun cider-mode-hook ()
   (eldoc-mode)
-  (outline-minor-mode))
+  (outline-minor-mode)
+  (paredit-mode 1))
 
 (use-package cider
   :bind
@@ -144,7 +158,9 @@
   (local-set-key "\M-." 'find-function)
   (font-lock-mode 1)
   ;; (auto-complete-mode -1)
-  (eldoc-mode 1))
+  (eldoc-mode 1)
+  (paredit-mode 1)
+  (lambda-mode 1))
 
 (defun setup-lisp-indent-function (&optional indent-function)
   (let ((indent-function (or indent-function 'lisp-indent-function))
