@@ -1,6 +1,5 @@
 (load-relative "mac.el")
 
-;; (set-default-font "Menlo 12")
 (defun ns-fill-display ()
   (interactive)
   (setq ns-auto-hide-menu-bar nil)
@@ -11,4 +10,3 @@
     (set-frame-height (selected-frame) 80)))
 
 (setq ns-use-native-fullscreen nil)
-(define-key ctl-z-map "x" 'mac-toggle-max-window)
