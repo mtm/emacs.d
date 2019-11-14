@@ -2,14 +2,13 @@
 
 (my-el-get-bundles
  alert
- (disable-mouse :url "https://github.com/purcell/disable-mouse.git"
-                :features disable-mouse)
+;; (disable-mouse :url "https://github.com/purcell/disable-mouse.git"
+;;                :features disable-mouse)
  dictionary
- elscreen
+;; elscreen
  edit-server
- (ipinfo.el :url "https://github.com/dakra/ipinfo.el.git"
-            :features ipinfo)
- libvterm
+ ;; (ipinfo.el :url "https://github.com/dakra/ipinfo.el.git"
+ ;;            :features ipinfo)
  (password-mode
   :url "https://github.com/juergenhoetzel/password-mode.git"
   :features password-mode)
@@ -26,15 +25,15 @@
   :config
   (load-library "dictionary-init"))
 
-(use-package elscreen
-  :demand t
-  :bind
-  (:map elscreen-map
-        ("z" . elscreen-toggle)
-        ("\C-z" . elscreen-toggle))
-  :config
-  (global-unset-key "\C-z")
-  (setq elscreen-display-tab nil))
+;; (use-package elscreen
+;;   :demand t
+;;   :bind
+;;   (:map elscreen-map
+;;         ("z" . elscreen-toggle)
+;;         ("\C-z" . elscreen-toggle))
+;;   :config
+;;   (global-unset-key "\C-z")
+;;   (setq elscreen-display-tab nil))
 
 (defun iso-calendar ()
   (interactive)
@@ -67,10 +66,10 @@
   (add-hook 'list-diary-entries-hook 'sort-diary-entries t)
   (setq display-time-day-and-date nil
         display-time-world-list '(("Pacific/Honolulu" "Honolulu")
-				  ("America/Anchorage" "Anchorage")
-				  ("America/Los_Angeles" "Los Angeles")
-				  ("America/Phoenix" "Phoenix")
-				  ("America/Chicago" "Chicago")
+                                  ("America/Anchorage" "Anchorage")
+                                  ("America/Los_Angeles" "Los Angeles")
+                                  ("America/Phoenix" "Phoenix")
+                                  ("America/Chicago" "Chicago")
                                   ("America/New_York" "New York")
                                   ("Europe/London" "London")
                                   ("Europe/Paris" "Paris")
@@ -80,11 +79,11 @@
                                   ("Pacific/Auckland" "Auckland"))
         display-time-world-time-format "%a %d %b %R %Z"))
 
-(use-package disable-mouse
-  :diminish disable-mouse-global-mode
-  :delight disable-mouse-global-mode
-  :config
-  (global-disable-mouse-mode))
+;; (use-package disable-mouse
+;;   :diminish disable-mouse-global-mode
+;;   :delight disable-mouse-global-mode
+;;   :config
+;;   (global-disable-mouse-mode))
 
 (use-package edit-server
   :config
@@ -92,7 +91,7 @@
         edit-server-new-frame nil)
   (edit-server-start))
 
-(use-package ipinfo)
+;; (use-package ipinfo)
 
 (defun my-midnight-hook ()
   (org-gcal-multi-fetch)
@@ -110,25 +109,25 @@
   (pdf-tools-install)
   (setq-default pdf-view-display-size 'fit-page)
   (bind-keys :map pdf-view-mode-map
-	     ("<s-spc>" .  pdf-view-scroll-down-or-previous-page)
-	     ("g"  . pdf-view-first-page)
-	     ("G"  . pdf-view-last-page)
-	     ("l"  . image-forward-hscroll)
-	     ("h"  . image-backward-hscroll)
-	     ("j"  . pdf-view-next-page)
-	     ("k"  . pdf-view-previous-page)
-	     ("e"  . pdf-view-goto-page)
-	     ("u"  . pdf-view-revert-buffer)
-	     ("al" . pdf-annot-list-annotations)
-	     ("ad" . pdf-annot-delete)
-	     ("aa" . pdf-annot-attachment-dired)
-	     ("am" . pdf-annot-add-markup-annotation)
-	     ("at" . pdf-annot-add-text-annotation)
-	     ("y"  . pdf-view-kill-ring-save)
-	     ("i"  . pdf-misc-display-metadata)
-	     ("s"  . pdf-occur)
-	     ("b"  . pdf-view-set-slice-from-bounding-box)
-	     ("r"  . pdf-view-reset-slice)))
+             ("<s-spc>" .  pdf-view-scroll-down-or-previous-page)
+             ("g"  . pdf-view-first-page)
+             ("G"  . pdf-view-last-page)
+             ("l"  . image-forward-hscroll)
+             ("h"  . image-backward-hscroll)
+             ("j"  . pdf-view-next-page)
+             ("k"  . pdf-view-previous-page)
+             ("e"  . pdf-view-goto-page)
+             ("u"  . pdf-view-revert-buffer)
+             ("al" . pdf-annot-list-annotations)
+             ("ad" . pdf-annot-delete)
+             ("aa" . pdf-annot-attachment-dired)
+             ("am" . pdf-annot-add-markup-annotation)
+             ("at" . pdf-annot-add-text-annotation)
+             ("y"  . pdf-view-kill-ring-save)
+             ("i"  . pdf-misc-display-metadata)
+             ("s"  . pdf-occur)
+             ("b"  . pdf-view-set-slice-from-bounding-box)
+             ("r"  . pdf-view-reset-slice)))
 
 (use-package magit-popup)
 
@@ -149,54 +148,9 @@
   (setq forge-topic-list-limit (car *my-forge-toggle-topic-settings*))
   (define-key magit-mode-map "\M-c" 'my-forge-toggle-closed-topics))
 
-(use-package vterm)
-
 ;;;;;;;;;;;;;;;; startup ;;;;;;;;;;;;;;;;
 
 (setq server-use-tcp t)
 (server-start)
 
-(defun gnome-screenshot (args)
-  (interactive (list (gnome-screenshot-arguments)))
-  (exec! (list* "gnome-screenshot" args)))
 
-(magit-define-popup gnome-screenshot-popup
-  "Show popup buffer featuring Gnome screenshot commands"
-  'exwm-commands
-  :switches '((?a "Area"      "--area")
-              (?b "Border"    "--include-border")
-              (?c "Clipboard" "--clipboard")
-              (?w "Window"    "--window"))
-  :options  '((?d "Delay" "--delay=" read-number)
-              (?e "Border effect" "--border-effect="
-                  (lambda (prompt &rest args)
-                    (completing-read
-                     prompt
-                     '("shadow" "border" "vintage" "none")))))
-  :actions  '((?x "Execute" gnome-screenshot))
-  :default-action 'gnome-screenshot)
-
-(global-set-key (kbd "<print>") 'gnome-screenshot-popup)
-
-(defmacro def-elscreen-goto (i)
-  `(defun ,(intern (format "elscreen-goto-%d" i)) ()
-     (interactive)
-     (elscreen-goto ,i)))
-
-(def-elscreen-goto 0)
-(def-elscreen-goto 1)
-(def-elscreen-goto 2)
-(def-elscreen-goto 3)
-(def-elscreen-goto 4)
-(def-elscreen-goto 5)
-(def-elscreen-goto 6)
-(def-elscreen-goto 7)
-(def-elscreen-goto 8)
-
-(elscreen-start)
-
-(dotimes (i 9)
-  (global-set-key (kbd (format "H-%d" i))
-                  (intern (format "elscreen-goto-%d" i)))
-  (global-set-key (kbd (format "C-z C-%d" i))
-                  (intern (format "elscreen-goto-%d" i))))
