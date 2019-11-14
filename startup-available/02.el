@@ -5,6 +5,8 @@
 
 ;;;;;;;;;;;;;;;; packages ;;;;;;;;;;;;;;;;
 
+(load "lambda-mode")
+
 (use-package highlight-sexp
   :config
   (setq hl-sexp-background-color "grey95"))
@@ -14,6 +16,7 @@
   (outline-minor-mode 1)
   (enable-paredit-mode)
   (highlight-sexp-mode 1)
+  (lambda-mode 1)
 
   ;; open .edn files in clojure-mode
   (setq auto-mode-alist (cons `("\\.edn$" . clojure-mode) auto-mode-alist)))
