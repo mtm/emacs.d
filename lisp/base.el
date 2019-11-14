@@ -245,6 +245,17 @@ a comma."
       (call-process opener nil 0 nil (expand-file-name file))
       (message "Don't know how to open a file on %S" system-type))))
 
+(defun set-exec-path-from-shell-PATH ()
+  (let ((path-from-shell (replace-regexp-in-string
+                            "[[:space:]\n]*$" ""
+                            (shell-command-to-string "$SHELL -l -c 'echo $PATH'"))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
+
+(when (equal system-type 'darwin)
+  (set-exec-path-from-shell-PATH))
+
+
 (defun define-keys (kmap ks)
   (dolist (k ks)
     (let ((key (first k))
@@ -298,3 +309,5 @@ a comma."
 (defun x-set-mode-line-color (color)
   (interactive (list (read-color "Mode-line color: ")))
   (set-face-background 'mode-line color))
+
+(setq el-get-notify-type 'message)
