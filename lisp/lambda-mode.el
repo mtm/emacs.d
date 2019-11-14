@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(defvar lambda-regex "\(\\(fn\\) "
+(defvar lambda-regex "\(\\(lambda\\|fn\\) "
   "A regular expression matching things to convert to lambda symbols.")
 
 (defvar lambda-symbol (string 955) "The symbol to use for lambdas")
@@ -41,7 +41,6 @@
             (overlay-put overlay 'type 'lambda)
             (overlay-put overlay 'evaporate t)
             (overlay-put overlay 'display lambda-symbol)))))))
-
 
 (defun lambda-unfontify (beg end)
   (mapc #'(lambda (o)
