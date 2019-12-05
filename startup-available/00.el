@@ -66,6 +66,7 @@
 (setq inhibit-startup-message t
       inhibit-splash-screen t
       backup-inhibited t
+      create-lockfiles nil
       remote-shell-program "ssh"
       truncate-partial-width-windows t
       visible-bell 'top-bottom
