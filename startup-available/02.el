@@ -2,6 +2,7 @@
  (cider :checkout "v0.23.0")
  highlight-sexp
  geiser
+ expand-region
  csv-mode)
 
 ;;;;;;;;;;;;;;;; packages ;;;;;;;;;;;;;;;;
@@ -11,6 +12,10 @@
 (use-package highlight-sexp
   :config
   (setq hl-sexp-background-color "grey95"))
+
+(use-package expand-region
+  :config
+  (global-set-key (kbd "C-'") 'er/expand-region))
 
 (defun clojure-mode-hook ()
   (auto-revert-mode 1)
