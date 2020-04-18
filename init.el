@@ -12,3 +12,4 @@
 (load "plat")
 (load "window")
 (load-file-if-exists custom-file 'noerror)
+(load-file-if-exists "~/omnyway/omnyway.el")

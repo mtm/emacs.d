@@ -133,7 +133,7 @@
 ;; (set-default-font "Menlo 12")
 ;; (set-default-font "Andale Mono 10")
 ;; (set-default-font "Inconsolata 13")
-(set-default-font "Inconsolata 18")
+(set-default-font "Monaco 16")
 (global-set-key "\M-h" 'mac-hide-emacs)
 (global-set-key '[C-tab] 'other-window)
 

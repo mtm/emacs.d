@@ -1,5 +1,5 @@
 (my-el-get-bundles
- (cider :checkout "v0.23.0")
+ (cider :checkout "v0.17.0")
  highlight-sexp
  geiser
  expand-region

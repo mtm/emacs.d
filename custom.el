@@ -11,6 +11,7 @@
  '(fringe-mode (quote (nil . 0)) nil (fringe))
  '(indicate-empty-lines t)
  '(menu-bar-mode nil)
+ '(package-selected-packages (quote (frame-purpose tracking dash-functional)))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
